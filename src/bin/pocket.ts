@@ -4,21 +4,22 @@ import { help } from "../commands/help.js";
 import { doctor } from "../commands/doctor.js";
 import { completions } from "../commands/completions.js";
 import { create } from "../commands/create.js";
+import { CliError } from "../errors.js";
 
 const USAGE = `
-  rc — Turn any script folder into a CLI
+  pocket — Turn any script folder into a CLI
 
   Usage:
-    rc init <shell> --name <name> --dir <dir> [--dir <dir>...]
-    rc help --name <name> --dir <dir>
-    rc doctor --dir <dir>
-    rc completions <shell> --name <name> --dir <dir>
-    rc create <path>
+    pocket init <shell> --name <name> --dir <dir> [--dir <dir>...]
+    pocket help --name <name> --dir <dir>
+    pocket doctor --dir <dir>
+    pocket completions <shell> --name <name> --dir <dir>
+    pocket create <path>
 
   Setup:
-    eval "$(rc init zsh --name myapp --dir ./scripts)"
+    eval "$(pocket init zsh --name myapp --dir ./scripts)"
 
-  https://github.com/rodrigopsasaki/rodrigos-cli
+  https://github.com/rodrigopsasaki/pocketcli
 `;
 
 function main(): void {
@@ -34,7 +35,7 @@ function main(): void {
     }
 
     case "help": {
-      const name = getFlag(parsed.flags, "name") ?? "rc";
+      const name = getFlag(parsed.flags, "name") ?? "pocket";
       const dirs = getFlagAll(parsed.flags, "dir");
       help({ name, dirs });
       break;
@@ -48,7 +49,7 @@ function main(): void {
 
     case "completions": {
       const shell = parsed.positionals[0] ?? "";
-      const name = getFlag(parsed.flags, "name") ?? "rc";
+      const name = getFlag(parsed.flags, "name") ?? "pocket";
       const dirs = getFlagAll(parsed.flags, "dir");
       completions({ shell, name, dirs });
       break;
@@ -57,9 +58,7 @@ function main(): void {
     case "create": {
       const path = parsed.positionals[0];
       if (!path) {
-        console.error("rc create: path argument is required");
-        console.error("Usage: rc create <path>");
-        process.exit(1);
+        throw new CliError("pocket create", "path argument is required (usage: pocket create <path>)");
       }
       create(path);
       break;
@@ -71,4 +70,12 @@ function main(): void {
   }
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  if (err instanceof CliError) {
+    console.error(`${err.prefix}: ${err.message}`);
+    process.exit(err.exitCode);
+  }
+  throw err;
+}

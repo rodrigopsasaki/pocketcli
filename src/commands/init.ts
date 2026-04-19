@@ -1,6 +1,7 @@
 import { generateZshFunction } from "../shell/templates/zsh.js";
 import { generateBashFunction } from "../shell/templates/bash.js";
 import { generateFishFunction } from "../shell/templates/fish.js";
+import { CliError } from "../errors.js";
 
 const SUPPORTED_SHELLS = ["zsh", "bash", "fish"] as const;
 type Shell = (typeof SUPPORTED_SHELLS)[number];
@@ -19,29 +20,25 @@ const GENERATORS: Readonly<Record<Shell, (opts: { name: string; dirs: readonly s
 
 /**
  * Generate a shell function that turns script directories into a CLI.
- * Outputs the function to stdout for use with `eval "$(rc init ...)"`.
+ * Outputs the function to stdout for use with `eval "$(pocket init ...)"`.
  */
 export function init(options: InitOptions): void {
   const { shell, name, dirs } = options;
 
   if (!shell) {
-    console.error("rc init: shell argument is required (zsh, bash, or fish)");
-    process.exit(1);
+    throw new CliError("pocket init", "shell argument is required (zsh, bash, or fish)");
   }
 
   if (!name) {
-    console.error("rc init: --name is required");
-    process.exit(1);
+    throw new CliError("pocket init", "--name is required");
   }
 
   if (dirs.length === 0) {
-    console.error("rc init: at least one --dir is required");
-    process.exit(1);
+    throw new CliError("pocket init", "at least one --dir is required");
   }
 
   if (!isSupportedShell(shell)) {
-    console.error(`rc init: unsupported shell "${shell}". Use ${SUPPORTED_SHELLS.join(", ")}.`);
-    process.exit(1);
+    throw new CliError("pocket init", `unsupported shell "${shell}". Use ${SUPPORTED_SHELLS.join(", ")}.`);
   }
 
   process.stdout.write(GENERATORS[shell]({ name, dirs }));

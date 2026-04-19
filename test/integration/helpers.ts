@@ -4,7 +4,7 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomBytes } from "crypto";
 
-const TEMP_DIR = join(tmpdir(), "rc-test");
+const TEMP_DIR = join(tmpdir(), "pocket-test");
 
 export interface RunResult {
   stdout: string;
@@ -18,7 +18,7 @@ export interface RunResult {
  */
 export function runZsh(functionCode: string, command: string): RunResult {
   mkdirSync(TEMP_DIR, { recursive: true });
-  const tempFile = join(TEMP_DIR, `rc-test-${randomBytes(4).toString("hex")}.zsh`);
+  const tempFile = join(TEMP_DIR, `pocket-test-${randomBytes(4).toString("hex")}.zsh`);
 
   try {
     writeFileSync(tempFile, `${functionCode}\n${command}\n`);

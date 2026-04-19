@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { dirname, extname } from "path";
+import { CliError } from "../errors.js";
 
 const SHEBANG_MAP: Readonly<Record<string, string>> = {
   sh: "#!/bin/bash",
@@ -30,8 +31,7 @@ const COMMENT_MAP: Readonly<Record<string, string>> = {
  */
 export function create(path: string): void {
   if (existsSync(path)) {
-    console.error(`rc create: file already exists: ${path}`);
-    process.exit(1);
+    throw new CliError("pocket create", `file already exists: ${path}`);
   }
 
   const ext = extname(path).slice(1) || "sh";

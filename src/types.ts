@@ -41,7 +41,7 @@ export interface RuntimeInfo {
   readonly args: readonly string[];
 }
 
-/** Parsed CLI arguments for rc commands. */
+/** Parsed CLI arguments for pocket commands. */
 export interface ParsedArgs {
   /** The subcommand, e.g. "init", "help". */
   readonly command: string | undefined;

@@ -1,6 +1,7 @@
 import { scan } from "../core/scanner.js";
 import type { Script } from "../types.js";
 import * as fmt from "../utils/format.js";
+import { CliError } from "../errors.js";
 
 interface HelpOptions {
   readonly name: string;
@@ -18,8 +19,7 @@ export function help(options: HelpOptions): void {
   const { name, dirs } = options;
 
   if (dirs.length === 0) {
-    console.error("rc help: at least one --dir is required");
-    process.exit(1);
+    throw new CliError("pocket help", "at least one --dir is required");
   }
 
   const { scripts } = scan({ dirs });

@@ -1,30 +1,47 @@
 {
-  "name": "rodrigos-cli",
-  "version": "2.0.0",
+  "name": "pocketcli",
+  "version": "1.0.0",
   "description": "Turn any script folder into a CLI",
   "bin": {
-    "rc": "dist/rc.cjs"
+    "pocket": "dist/pocket.cjs"
   },
   "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "esbuild src/bin/rc.ts --bundle --platform=node --target=node18 --outfile=dist/rc.cjs --format=cjs --banner:js='#!/usr/bin/env node'",
-    "dev": "tsx src/bin/rc.ts",
+    "build": "esbuild src/bin/pocket.ts --bundle --platform=node --target=node18 --outfile=dist/pocket.cjs --format=cjs --banner:js='#!/usr/bin/env node'",
+    "dev": "tsx src/bin/pocket.ts",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write 'src/**/*.ts'",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && chmod +x dist/rc.js"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "cli",
     "scripts",
+    "shell",
+    "bash",
+    "zsh",
+    "fish",
     "developer-tools",
     "whitelabel"
   ],
   "author": "Rodrigo Sasaki",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rodrigopsasaki/pocketcli.git"
+  },
+  "homepage": "https://github.com/rodrigopsasaki/pocketcli#readme",
+  "bugs": {
+    "url": "https://github.com/rodrigopsasaki/pocketcli/issues"
+  },
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "chalk": "^5.3.0"

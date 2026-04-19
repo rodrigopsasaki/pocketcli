@@ -4,6 +4,7 @@ import { scan } from "../core/scanner.js";
 import { resolveRuntime } from "../core/runner.js";
 import type { DoctorIssue } from "../types.js";
 import * as fmt from "../utils/format.js";
+import { CliError } from "../errors.js";
 
 interface DoctorOptions {
   readonly dirs: readonly string[];
@@ -18,8 +19,7 @@ export function doctor(options: DoctorOptions): void {
   const { dirs } = options;
 
   if (dirs.length === 0) {
-    console.error("rc doctor: at least one --dir is required");
-    process.exit(1);
+    throw new CliError("pocket doctor", "at least one --dir is required");
   }
 
   const issues: DoctorIssue[] = [];

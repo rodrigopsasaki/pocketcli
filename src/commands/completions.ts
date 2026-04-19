@@ -1,5 +1,6 @@
 import { scan } from "../core/scanner.js";
 import type { Script } from "../types.js";
+import { CliError } from "../errors.js";
 
 interface CompletionsOptions {
   readonly shell: string;
@@ -15,13 +16,11 @@ export function completions(options: CompletionsOptions): void {
   const { shell, name, dirs } = options;
 
   if (!shell) {
-    console.error("rc completions: shell argument is required (zsh, bash, or fish)");
-    process.exit(1);
+    throw new CliError("pocket completions", "shell argument is required (zsh, bash, or fish)");
   }
 
   if (dirs.length === 0) {
-    console.error("rc completions: at least one --dir is required");
-    process.exit(1);
+    throw new CliError("pocket completions", "at least one --dir is required");
   }
 
   const { scripts } = scan({ dirs });
@@ -37,8 +36,7 @@ export function completions(options: CompletionsOptions): void {
       process.stdout.write(generateFishCompletions(name, scripts));
       break;
     default:
-      console.error(`rc completions: unsupported shell "${shell}". Use zsh, bash, or fish.`);
-      process.exit(1);
+      throw new CliError("pocket completions", `unsupported shell "${shell}". Use zsh, bash, or fish.`);
   }
 }
 

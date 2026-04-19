@@ -1,7 +1,7 @@
 #!/bin/bash
-# Echo RC environment variables for testing
-echo "RC_COMMAND=${RC_COMMAND}"
-echo "RC_CLI_NAME=${RC_CLI_NAME}"
-echo "RC_SCRIPT_PATH=${RC_SCRIPT_PATH}"
-echo "RC_DIR=${RC_DIR}"
-echo "RC_DIRS=${RC_DIRS}"
+# Echo POCKET environment variables for testing
+echo "POCKET_COMMAND=${POCKET_COMMAND}"
+echo "POCKET_CLI_NAME=${POCKET_CLI_NAME}"
+echo "POCKET_SCRIPT_PATH=${POCKET_SCRIPT_PATH}"
+echo "POCKET_DIR=${POCKET_DIR}"
+echo "POCKET_DIRS=${POCKET_DIRS}"
