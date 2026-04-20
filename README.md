@@ -142,30 +142,28 @@ Three separate CLIs. Three names. Independent.
 
 ## Tradeoffs
 
-runic isn't trying to compete with Commander, Click, oclif, or Cobra on elegance or performance. The benchmark it's trying to beat is **"a folder of personal scripts that nobody, including you, ever sources."** Most engineers have one. Most engineers also never look in it. runic exists to close that gap with the smallest possible amount of ceremony.
+runic dispatches by reading the filesystem on every invocation. The consequences of that choice:
 
-With that target in mind, here's the honest tally.
+### Upsides
 
-### What you get for free
-
-- **Shell-native everything.** Because runic just `exec`s your scripts, you inherit how Unix already works: arg quoting, pipes (`ops logs | grep ERROR`), redirection, signals (Ctrl-C propagates correctly), TTY detection, exit codes, process groups, job control. Things that are tedious to wire up correctly in a Node/Python CLI come at zero cost.
-- **Login state, sudo prompts, file locks, tmux sessions.** Your scripts can `ssh-add`, prompt for `sudo`, hold a flock, attach to a tmux session — anything any other shell process can do. There's no runtime sandbox in the way.
-- **Polyglot by default.** bash next to python next to node next to ruby. Nobody on the team has to agree on a runtime.
-- **No registration step.** Scripts on disk are the source of truth. No manifest to forget to update. `ops help` and tab completions reflect reality.
+- **Shell-native everything.** runic `exec`s your scripts, so they inherit how Unix already works: arg quoting, pipes (`ops logs | grep ERROR`), redirection, signals, TTY detection, exit codes, process groups, job control.
+- **Login state, sudo prompts, file locks, tmux sessions.** Scripts can `ssh-add`, prompt for `sudo`, hold a flock, attach to a tmux session — anything any other shell process can do.
+- **Polyglot.** bash, python, node, ruby, typescript, perl, php — any combination in the same CLI.
+- **No registration step.** Scripts on disk are the source of truth; there's no manifest. `ops help` and tab completions are generated from the filesystem.
 - **Each script is independent.** No framework coupling between commands. Delete one, the others still work. A broken script doesn't take down the CLI.
-- **Comments are documentation.** First comment after the shebang shows up as the description in `ops help`. Zero ceremony.
-- **Migrating in or out is cheap.** *In:* drop your existing scripts in a folder. *Out:* keep using them as scripts. The framework doesn't capture them — they're still just files with shebangs.
+- **Descriptions come from comments.** The first comment after the shebang is what `ops help` prints for that command.
+- **Migration is filesystem-only.** Adopt by pointing `--dir` at a folder of scripts. Stop using runic by deleting the eval line — the scripts remain as files with shebangs.
 
-### What you give up
+### Downsides
 
-- **A filesystem read on every invocation.** Each `ops <command>` walks the script dirs. Millisecond-scale, but real, and absolutely not the right tool for something you'd run thousands of times per second. (For 10–100 invocations a day, you'll never notice.)
+- **A filesystem read on every invocation.** Each `ops <command>` walks the script dirs. Millisecond-scale, proportional to script-dir size.
 - **No global flags.** `--verbose` doesn't transparently apply to every command — each script handles its own arg parsing.
 - **No central validation.** You can't declare "this command needs `--env=staging|prod`" once. Each script enforces its own contract.
-- **Auto-help is minimal.** You get a one-line description, not rich Commander-style usage / options / examples. If you need that, write it inside the script and print it on `--help`.
-- **Refactor cost is filesystem cost.** Rename `db/` to `database/` and the command name moves with it. There's no manifest layer to insulate command names from file paths.
-- **Distribution still means "install runic."** Sharing your CLI = sharing the script folder + asking the recipient to install runic and `eval` the init line. There's no single-binary pack.
+- **Auto-help is minimal.** One-line description per command; no generated usage / options / examples. Scripts that need rich help implement their own `--help`.
+- **Refactor cost is filesystem cost.** Rename `db/` to `database/` and the command name moves with it. There's no manifest layer insulating command names from file paths.
+- **Distribution still requires runic.** Sharing your CLI means sharing the script folder and asking the recipient to install runic and `eval` the init line. There's no single-binary pack.
 
-Want one of these smoothed out without giving up runic's flexibility? [Open an issue](https://github.com/rodrigopsasaki/runic/issues) and let's talk — several of them are solvable in the shell-function template without compromising the core model.
+Have an idea for addressing one of the downsides without changing the core model? [Open an issue](https://github.com/rodrigopsasaki/runic/issues) and let's talk.
 
 ## Built-in commands
 
