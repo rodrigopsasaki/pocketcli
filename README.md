@@ -1,7 +1,5 @@
 # runic
 
-> Sorry, all the good names were already taken.
-
 Turn any script folder into a CLI.
 
 ```bash
@@ -36,6 +34,8 @@ The generated function handles everything: command dispatch, help, doctor diagno
 ```bash
 npm install -g run-user-nested-invokable-commands
 ```
+
+> Sorry, all the good names were already taken.
 
 ## Setup
 
