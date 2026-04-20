@@ -11,26 +11,29 @@ eval "$(runic init zsh --name ops --dir ~/scripts)"
 Now your folder *is* a CLI:
 
 ```
-~/scripts/                      $ ops deploy production
-├── deploy.sh             →     $ ops db backup --full
-├── rollback.py                 $ ops rollback
-└── db/                         $ ops help
-    ├── backup.sh
-    └── migrate.rb
+~/scripts/                       $ ops lint
+├── lint.sh                 →    $ ops format
+├── format.sh                    $ ops dev start
+├── dev/                         $ ops gen client
+│   ├── start.sh                 $ ops help
+│   └── seed.py
+└── gen/
+    ├── client.sh
+    └── component.js
 ```
 
 ### Want a new command? Drop a file.
 
 ```bash
-$ cat > ~/scripts/logs.sh <<'SCRIPT'
+$ cat > ~/scripts/pr.sh <<'SCRIPT'
 #!/bin/bash
-# Tail nginx access logs
-tail -f /var/log/nginx/access.log
+# Open a PR using our team template
+gh pr create --template .github/pull_request_template.md --web
 SCRIPT
 
-$ chmod +x ~/scripts/logs.sh
+$ chmod +x ~/scripts/pr.sh
 
-$ ops logs    # live. no reload, no registration, no restart.
+$ ops pr    # live. no reload, no registration, no restart.
 ```
 
 No manifest. No config file. The shell function reads the filesystem on every invocation, so the CLI is always whatever's currently on disk.
@@ -118,9 +121,9 @@ Anything in `~/my-scripts` overrides the same-named command in `/shared/team-scr
 
 What this enables:
 
-- **Personal overrides on a shared repo.** Your company maintains `/shared/team-scripts/deploy.sh` that does the standard thing. You want it to also tail logs after deploying. Drop your own `deploy.sh` in `~/my-scripts` — it shadows the team version, just for you, no fork required.
-- **Hotfix without a PR.** The team script has a bug at 11pm. Copy it to `~/my-scripts`, fix it, keep working. The override evaporates when you delete it.
-- **Per-environment behavior.** Same command name, different implementation in `~/my-scripts/aws/` vs `~/my-scripts/gcp/`. Switch by reordering `--dir`.
+- **Personal overrides on a shared repo.** Your team maintains `/shared/team-scripts/test.sh` that runs the standard test suite. You want it to also reset your local DB first. Drop your own `test.sh` in `~/my-scripts` — it shadows the team version, just for you, no fork required.
+- **Try a change without a PR.** The team script has a rough edge you want to smooth out. Copy it to `~/my-scripts`, edit, use it for a week, then PR the change once you're sure. The override evaporates when you delete it.
+- **Per-context behavior.** Same command name, different implementation in `~/my-scripts/work/` vs `~/my-scripts/personal/`. Switch by reordering `--dir`.
 - **Layered teams.** Platform team's repo, then your squad's repo, then your personal scripts: `--dir ~/personal --dir ~/squad-scripts --dir /platform-scripts`. Each layer can shadow the next.
 
 `runic doctor` reports every shadowed command so nothing happens behind your back.
@@ -130,12 +133,39 @@ What this enables:
 The `--name` flag is the CLI's identity. Create as many as you want:
 
 ```bash
-eval "$(runic init zsh --name ops --dir ~/scripts/ops)"
 eval "$(runic init zsh --name dev --dir ~/scripts/dev)"
-eval "$(runic init zsh --name infra --dir /opt/infra/scripts)"
+eval "$(runic init zsh --name docs --dir ~/scripts/docs)"
+eval "$(runic init zsh --name lint --dir /opt/lint-tools)"
 ```
 
 Three separate CLIs. Three names. Independent.
+
+## Tradeoffs
+
+runic isn't trying to compete with Commander, Click, oclif, or Cobra on elegance or performance. The benchmark it's trying to beat is **"a folder of personal scripts that nobody, including you, ever sources."** Most engineers have one. Most engineers also never look in it. runic exists to close that gap with the smallest possible amount of ceremony.
+
+With that target in mind, here's the honest tally.
+
+### What you get for free
+
+- **Shell-native everything.** Because runic just `exec`s your scripts, you inherit how Unix already works: arg quoting, pipes (`ops logs | grep ERROR`), redirection, signals (Ctrl-C propagates correctly), TTY detection, exit codes, process groups, job control. Things that are tedious to wire up correctly in a Node/Python CLI come at zero cost.
+- **Login state, sudo prompts, file locks, tmux sessions.** Your scripts can `ssh-add`, prompt for `sudo`, hold a flock, attach to a tmux session — anything any other shell process can do. There's no runtime sandbox in the way.
+- **Polyglot by default.** bash next to python next to node next to ruby. Nobody on the team has to agree on a runtime.
+- **No registration step.** Scripts on disk are the source of truth. No manifest to forget to update. `ops help` and tab completions reflect reality.
+- **Each script is independent.** No framework coupling between commands. Delete one, the others still work. A broken script doesn't take down the CLI.
+- **Comments are documentation.** First comment after the shebang shows up as the description in `ops help`. Zero ceremony.
+- **Migrating in or out is cheap.** *In:* drop your existing scripts in a folder. *Out:* keep using them as scripts. The framework doesn't capture them — they're still just files with shebangs.
+
+### What you give up
+
+- **A filesystem read on every invocation.** Each `ops <command>` walks the script dirs. Millisecond-scale, but real, and absolutely not the right tool for something you'd run thousands of times per second. (For 10–100 invocations a day, you'll never notice.)
+- **No global flags.** `--verbose` doesn't transparently apply to every command — each script handles its own arg parsing.
+- **No central validation.** You can't declare "this command needs `--env=staging|prod`" once. Each script enforces its own contract.
+- **Auto-help is minimal.** You get a one-line description, not rich Commander-style usage / options / examples. If you need that, write it inside the script and print it on `--help`.
+- **Refactor cost is filesystem cost.** Rename `db/` to `database/` and the command name moves with it. There's no manifest layer to insulate command names from file paths.
+- **Distribution still means "install runic."** Sharing your CLI = sharing the script folder + asking the recipient to install runic and `eval` the init line. There's no single-binary pack.
+
+If those tradeoffs read as showstoppers, you probably want a real CLI framework — Commander, oclif, Click, Cobra — and you should reach for one without hesitation. If they read as "yeah, that's fine for what I'm doing," runic is built for you.
 
 ## Built-in commands
 
@@ -169,9 +199,9 @@ ops completions fish | source
 ## Scaffolding new scripts
 
 ```bash
-runic create scripts/deploy.sh      # creates with #!/bin/bash
-runic create scripts/analyze.py     # creates with #!/usr/bin/env python3
-runic create scripts/serve.js       # creates with #!/usr/bin/env node
+runic create scripts/lint.sh             # creates with #!/bin/bash
+runic create scripts/dev/seed.py          # creates with #!/usr/bin/env python3
+runic create scripts/gen/component.js     # creates with #!/usr/bin/env node
 ```
 
 Creates the file with the right shebang, a description placeholder, and executable permissions.
@@ -182,9 +212,9 @@ Every script receives context through environment variables:
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `RUNIC_COMMAND` | `db backup` | The command path as typed |
+| `RUNIC_COMMAND` | `dev start` | The command path as typed |
 | `RUNIC_CLI_NAME` | `ops` | The CLI name |
-| `RUNIC_SCRIPT_PATH` | `/home/you/scripts/db/backup.sh` | Absolute path to the script |
+| `RUNIC_SCRIPT_PATH` | `/home/you/scripts/dev/start.sh` | Absolute path to the script |
 | `RUNIC_DIR` | `/home/you/scripts` | Which directory this script was found in |
 | `RUNIC_DIRS` | `/home/you/scripts:/shared/scripts` | All directories (colon-separated) |
 
@@ -192,25 +222,25 @@ Scripts can detect they're running inside a generated CLI by checking for `RUNIC
 
 ## Command resolution
 
-`runic` uses greedy longest-match. Given `ops deploy staging`:
+`runic` uses greedy longest-match. Given `ops test unit`:
 
-1. Try `<dir>/deploy/staging.{sh,py,js,...}` — if found, run it
-2. Try `<dir>/deploy.{sh,py,js,...}` with `staging` as an argument
+1. Try `<dir>/test/unit.{sh,py,js,...}` — if found, run it
+2. Try `<dir>/test.{sh,py,js,...}` with `unit` as an argument
 
 This means a script and a directory can coexist with the same name:
 
 ```
 scripts/
-├── deploy.sh           # ops deploy
-└── deploy/
-    └── staging.sh      # ops deploy staging
+├── test.sh             # ops test            (default: run everything)
+└── test/
+    └── unit.sh         # ops test unit       (just the unit tests)
 ```
 
 Both work. The longer match wins when it exists.
 
 ## Extension probe order
 
-When two scripts share a base name with different extensions (e.g., `deploy.sh` and `deploy.py`), the first match in probe order wins:
+When two scripts share a base name with different extensions (e.g., `lint.sh` and `lint.py`), the first match in probe order wins:
 
 `sh, bash, zsh, py, rb, js, ts, php, pl`
 
@@ -222,17 +252,17 @@ A platform team maintains shared scripts in a git repo:
 
 ```
 platform-tools/
-├── deploy/
-│   ├── staging.sh
-│   ├── production.sh
-│   └── rollback.py
-├── db/
-│   ├── backup.sh
-│   ├── restore.sh
-│   └── migrate.rb
-└── monitoring/
-    ├── check-disk.sh
-    └── restart-service.sh
+├── dev/
+│   ├── start.sh             # Start the local dev stack
+│   ├── seed.py              # Seed dev DB with sample data
+│   └── reset.sh             # Reset local state to a clean slate
+├── gen/
+│   ├── client.sh            # Generate typed API client from OpenAPI
+│   ├── component.js         # Scaffold a new React component
+│   └── service.rb           # Scaffold a new microservice from template
+└── docs/
+    ├── serve.sh             # Run the docs site locally
+    └── lint.py              # Check docs for broken links
 ```
 
 Each team member adds to their `.zshrc`:
