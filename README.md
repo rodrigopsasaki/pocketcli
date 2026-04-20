@@ -38,7 +38,9 @@ $ ops pr    # live. no reload, no registration, no restart.
 
 No manifest. No config file. The shell function reads the filesystem on every invocation, so the CLI is always whatever's currently on disk.
 
-Scripts can be in any language. Directories become subcommands. Filenames become command names. And if you [opt in](#native-binaries), native executables (Rust, Go, C, anything the kernel can run) drop into the same folder as first-class commands — compiled speed tier, right next to your bash one-liners.
+Scripts can be in any language. Directories become subcommands. Filenames become command names.
+
+With `--allow-binaries`, native executables (Rust, Go, C) join the same folder as first-class commands — details in [Native binaries](#native-binaries) below.
 
 ## How it works
 
@@ -101,7 +103,7 @@ Run `runic runtimes` to see which of these are installed on the current host, wi
 
 ### Native binaries
 
-Off by default. Pass `--allow-binaries` at init and runic will also dispatch extensionless *executables* — Mach-O, ELF, or any other format the kernel knows how to `execve`. Your Rust CLI, your Go tool, your hand-compiled C util: drop the binary in the script dir, it's a command.
+Off by default. Pass `--allow-binaries` at init and runic will also dispatch extensionless *executables* — Mach-O, ELF, or any other format the kernel knows how to `execve`. A Rust binary, a Go tool, a hand-compiled C util: all become commands alongside your scripts.
 
 ```bash
 eval "$(runic init zsh --name ops --dir ~/scripts --allow-binaries)"
@@ -219,14 +221,14 @@ $ runic runtimes
 
   runic runtimes
 
-  ✓ bash     5.2.37               (.sh, .bash)
-  ✓ zsh     5.9                   (.zsh)
-  ✓ python3 3.12.5                (.py)
-  ✓ ruby    3.3.0                 (.rb)
-  ✓ node    20.10.0               (.js)
-  ✓ tsx     4.19.2                (.ts — via npx tsx)
-  ✗ php     not installed         (.php)
-  ✓ perl    5.38.0                (.pl)
+  ✓ bash     5.2.37         (.sh, .bash)
+  ✓ zsh      5.9            (.zsh)
+  ✓ python3  3.12.5         (.py)
+  ✓ ruby     3.3.0          (.rb)
+  ✓ node     20.10.0        (.js)
+  ✓ tsx      4.19.2         (.ts — via npx tsx)
+  ✗ php      not installed  (.php)
+  ✓ perl     5.38.0         (.pl)
 
   Extensionless files dispatch via their shebang line — any interpreter on PATH works.
 ```
