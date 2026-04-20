@@ -2,4 +2,4 @@
 # Run database migrations
 import os
 
-print(f"migrate:{os.environ.get('POCKET_COMMAND', 'unknown')}")
+print(f"migrate:{os.environ.get('RUNIC_COMMAND', 'unknown')}")

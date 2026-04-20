@@ -16,11 +16,11 @@ export function completions(options: CompletionsOptions): void {
   const { shell, name, dirs } = options;
 
   if (!shell) {
-    throw new CliError("pocket completions", "shell argument is required (zsh, bash, or fish)");
+    throw new CliError("runic completions", "shell argument is required (zsh, bash, or fish)");
   }
 
   if (dirs.length === 0) {
-    throw new CliError("pocket completions", "at least one --dir is required");
+    throw new CliError("runic completions", "at least one --dir is required");
   }
 
   const { scripts } = scan({ dirs });
@@ -36,7 +36,7 @@ export function completions(options: CompletionsOptions): void {
       process.stdout.write(generateFishCompletions(name, scripts));
       break;
     default:
-      throw new CliError("pocket completions", `unsupported shell "${shell}". Use zsh, bash, or fish.`);
+      throw new CliError("runic completions", `unsupported shell "${shell}". Use zsh, bash, or fish.`);
   }
 }
 

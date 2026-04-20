@@ -5,54 +5,54 @@ import { runZsh } from "./helpers.js";
 
 const FIXTURES = join(import.meta.dirname, "..", "fixtures");
 
-describe("POCKET environment variables", () => {
-  it("should set POCKET_COMMAND to the matched command path", () => {
+describe("RUNIC environment variables", () => {
+  it("should set RUNIC_COMMAND to the matched command path", () => {
     const dir = join(FIXTURES, "edge-cases");
     const fn = generateZshFunction({ name: "t", dirs: [dir] });
 
     const { stdout } = runZsh(fn, "t env-echo");
 
-    expect(stdout).toContain("POCKET_COMMAND=env-echo");
+    expect(stdout).toContain("RUNIC_COMMAND=env-echo");
   });
 
-  it("should set POCKET_CLI_NAME to the function name", () => {
+  it("should set RUNIC_CLI_NAME to the function name", () => {
     const dir = join(FIXTURES, "edge-cases");
     const fn = generateZshFunction({ name: "myapp", dirs: [dir] });
 
     const { stdout } = runZsh(fn, "myapp env-echo");
 
-    expect(stdout).toContain("POCKET_CLI_NAME=myapp");
+    expect(stdout).toContain("RUNIC_CLI_NAME=myapp");
   });
 
-  it("should set POCKET_SCRIPT_PATH to the absolute script path", () => {
+  it("should set RUNIC_SCRIPT_PATH to the absolute script path", () => {
     const dir = join(FIXTURES, "edge-cases");
     const fn = generateZshFunction({ name: "t", dirs: [dir] });
 
     const { stdout } = runZsh(fn, "t env-echo");
 
-    expect(stdout).toContain(`POCKET_SCRIPT_PATH=${join(dir, "env-echo.sh")}`);
+    expect(stdout).toContain(`RUNIC_SCRIPT_PATH=${join(dir, "env-echo.sh")}`);
   });
 
-  it("should set POCKET_DIR to the matching directory", () => {
+  it("should set RUNIC_DIR to the matching directory", () => {
     const dir = join(FIXTURES, "edge-cases");
     const fn = generateZshFunction({ name: "t", dirs: [dir] });
 
     const { stdout } = runZsh(fn, "t env-echo");
 
-    expect(stdout).toContain(`POCKET_DIR=${dir}`);
+    expect(stdout).toContain(`RUNIC_DIR=${dir}`);
   });
 
-  it("should set POCKET_DIRS to all directories colon-separated", () => {
+  it("should set RUNIC_DIRS to all directories colon-separated", () => {
     const dir1 = join(FIXTURES, "edge-cases");
     const dir2 = join(FIXTURES, "flat");
     const fn = generateZshFunction({ name: "t", dirs: [dir1, dir2] });
 
     const { stdout } = runZsh(fn, "t env-echo");
 
-    expect(stdout).toContain(`POCKET_DIRS=${dir1}:${dir2}`);
+    expect(stdout).toContain(`RUNIC_DIRS=${dir1}:${dir2}`);
   });
 
-  it("should set POCKET_COMMAND for nested commands", () => {
+  it("should set RUNIC_COMMAND for nested commands", () => {
     const dir = join(FIXTURES, "nested");
     const fn = generateZshFunction({ name: "t", dirs: [dir] });
 

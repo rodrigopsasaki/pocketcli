@@ -31,7 +31,7 @@ const COMMENT_MAP: Readonly<Record<string, string>> = {
  */
 export function create(path: string): void {
   if (existsSync(path)) {
-    throw new CliError("pocket create", `file already exists: ${path}`);
+    throw new CliError("runic create", `file already exists: ${path}`);
   }
 
   const ext = extname(path).slice(1) || "sh";

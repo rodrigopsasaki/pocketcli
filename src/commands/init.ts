@@ -20,25 +20,25 @@ const GENERATORS: Readonly<Record<Shell, (opts: { name: string; dirs: readonly s
 
 /**
  * Generate a shell function that turns script directories into a CLI.
- * Outputs the function to stdout for use with `eval "$(pocket init ...)"`.
+ * Outputs the function to stdout for use with `eval "$(runic init ...)"`.
  */
 export function init(options: InitOptions): void {
   const { shell, name, dirs } = options;
 
   if (!shell) {
-    throw new CliError("pocket init", "shell argument is required (zsh, bash, or fish)");
+    throw new CliError("runic init", "shell argument is required (zsh, bash, or fish)");
   }
 
   if (!name) {
-    throw new CliError("pocket init", "--name is required");
+    throw new CliError("runic init", "--name is required");
   }
 
   if (dirs.length === 0) {
-    throw new CliError("pocket init", "at least one --dir is required");
+    throw new CliError("runic init", "at least one --dir is required");
   }
 
   if (!isSupportedShell(shell)) {
-    throw new CliError("pocket init", `unsupported shell "${shell}". Use ${SUPPORTED_SHELLS.join(", ")}.`);
+    throw new CliError("runic init", `unsupported shell "${shell}". Use ${SUPPORTED_SHELLS.join(", ")}.`);
   }
 
   process.stdout.write(GENERATORS[shell]({ name, dirs }));

@@ -3,7 +3,7 @@ import { parseArgv, getFlag, getFlagAll } from "../../src/utils/argv.js";
 
 describe("parseArgv", () => {
   it("should parse a command with no flags", () => {
-    const input = ["node", "pocket.js", "help"];
+    const input = ["node", "runic.js", "help"];
 
     const actual = parseArgv(input);
 
@@ -13,7 +13,7 @@ describe("parseArgv", () => {
   });
 
   it("should parse --flag value pairs", () => {
-    const input = ["node", "pocket.js", "init", "zsh", "--name", "acme", "--dir", "/opt/scripts"];
+    const input = ["node", "runic.js", "init", "zsh", "--name", "acme", "--dir", "/opt/scripts"];
 
     const actual = parseArgv(input);
 
@@ -23,7 +23,7 @@ describe("parseArgv", () => {
   });
 
   it("should parse --flag=value form", () => {
-    const input = ["node", "pocket.js", "init", "--name=acme"];
+    const input = ["node", "runic.js", "init", "--name=acme"];
 
     const actual = parseArgv(input);
 
@@ -31,7 +31,7 @@ describe("parseArgv", () => {
   });
 
   it("should accumulate repeated flags into an array", () => {
-    const input = ["node", "pocket.js", "init", "--dir", "/a", "--dir", "/b", "--dir", "/c"];
+    const input = ["node", "runic.js", "init", "--dir", "/a", "--dir", "/b", "--dir", "/c"];
 
     const actual = parseArgv(input);
 
@@ -39,7 +39,7 @@ describe("parseArgv", () => {
   });
 
   it("should treat standalone --flag (no value) as boolean true", () => {
-    const input = ["node", "pocket.js", "doctor", "--verbose"];
+    const input = ["node", "runic.js", "doctor", "--verbose"];
 
     const actual = parseArgv(input);
 
@@ -47,7 +47,7 @@ describe("parseArgv", () => {
   });
 
   it("should return undefined command when no args provided", () => {
-    const input = ["node", "pocket.js"];
+    const input = ["node", "runic.js"];
 
     const actual = parseArgv(input);
 
@@ -55,7 +55,7 @@ describe("parseArgv", () => {
   });
 
   it("should handle multiple positionals", () => {
-    const input = ["node", "pocket.js", "create", "scripts/deploy.sh", "extra"];
+    const input = ["node", "runic.js", "create", "scripts/deploy.sh", "extra"];
 
     const actual = parseArgv(input);
 

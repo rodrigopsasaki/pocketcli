@@ -8,7 +8,7 @@ import { generateZshFunction } from "../../src/shell/templates/zsh.js";
 import { generateBashFunction } from "../../src/shell/templates/bash.js";
 import { generateFishFunction } from "../../src/shell/templates/fish.js";
 
-const TEMP_DIR = join(tmpdir(), "pocket-syntax-test");
+const TEMP_DIR = join(tmpdir(), "runic-syntax-test");
 
 interface SyntaxCheckResult {
   ok: boolean;
@@ -77,26 +77,26 @@ describe("generated shell function syntax", () => {
     expect(result.ok || result.stderr.includes("skipping"), result.stderr).toBe(true);
   });
 
-  it("zsh template contains POCKET_* env vars, not RC_*", () => {
+  it("zsh template contains RUNIC_* env vars, not RC_*", () => {
     const code = generateZshFunction({ name: "t", dirs: ["/tmp"] });
-    expect(code).toContain("POCKET_COMMAND=");
-    expect(code).toContain("POCKET_CLI_NAME=");
+    expect(code).toContain("RUNIC_COMMAND=");
+    expect(code).toContain("RUNIC_CLI_NAME=");
     expect(code).not.toContain("RC_COMMAND");
     expect(code).not.toContain("RC_CLI_NAME");
   });
 
-  it("bash template contains POCKET_* env vars, not RC_*", () => {
+  it("bash template contains RUNIC_* env vars, not RC_*", () => {
     const code = generateBashFunction({ name: "t", dirs: ["/tmp"] });
-    expect(code).toContain("POCKET_COMMAND=");
-    expect(code).toContain("POCKET_CLI_NAME=");
+    expect(code).toContain("RUNIC_COMMAND=");
+    expect(code).toContain("RUNIC_CLI_NAME=");
     expect(code).not.toContain("RC_COMMAND");
     expect(code).not.toContain("RC_CLI_NAME");
   });
 
-  it("fish template contains POCKET_* env vars, not RC_*", () => {
+  it("fish template contains RUNIC_* env vars, not RC_*", () => {
     const code = generateFishFunction({ name: "t", dirs: ["/tmp"] });
-    expect(code).toContain("POCKET_COMMAND");
-    expect(code).toContain("POCKET_CLI_NAME");
+    expect(code).toContain("RUNIC_COMMAND");
+    expect(code).toContain("RUNIC_CLI_NAME");
     expect(code).not.toContain("RC_COMMAND");
     expect(code).not.toContain("RC_CLI_NAME");
   });

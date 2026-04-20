@@ -19,7 +19,7 @@ export function doctor(options: DoctorOptions): void {
   const { dirs } = options;
 
   if (dirs.length === 0) {
-    throw new CliError("pocket doctor", "at least one --dir is required");
+    throw new CliError("runic doctor", "at least one --dir is required");
   }
 
   const issues: DoctorIssue[] = [];

@@ -19,7 +19,7 @@ export function help(options: HelpOptions): void {
   const { name, dirs } = options;
 
   if (dirs.length === 0) {
-    throw new CliError("pocket help", "at least one --dir is required");
+    throw new CliError("runic help", "at least one --dir is required");
   }
 
   const { scripts } = scan({ dirs });

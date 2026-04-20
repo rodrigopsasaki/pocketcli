@@ -1,9 +1,9 @@
 {
-  "name": "pocketcli",
-  "version": "1.0.0",
+  "name": "run-user-nested-invokable-commands",
+  "version": "1.0.1",
   "description": "Turn any script folder into a CLI",
   "bin": {
-    "pocket": "dist/pocket.cjs"
+    "runic": "dist/runic.cjs"
   },
   "type": "module",
   "files": [
@@ -12,8 +12,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "esbuild src/bin/pocket.ts --bundle --platform=node --target=node18 --outfile=dist/pocket.cjs --format=cjs --banner:js='#!/usr/bin/env node'",
-    "dev": "tsx src/bin/pocket.ts",
+    "build": "esbuild src/bin/runic.ts --bundle --platform=node --target=node18 --outfile=dist/runic.cjs --format=cjs --banner:js='#!/usr/bin/env node'",
+    "dev": "tsx src/bin/runic.ts",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "lint": "eslint src --ext .ts",
@@ -30,17 +30,18 @@
     "zsh",
     "fish",
     "developer-tools",
-    "whitelabel"
+    "whitelabel",
+    "runic"
   ],
   "author": "Rodrigo Sasaki",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rodrigopsasaki/pocketcli.git"
+    "url": "git+https://github.com/rodrigopsasaki/runic.git"
   },
-  "homepage": "https://github.com/rodrigopsasaki/pocketcli#readme",
+  "homepage": "https://github.com/rodrigopsasaki/runic#readme",
   "bugs": {
-    "url": "https://github.com/rodrigopsasaki/pocketcli/issues"
+    "url": "https://github.com/rodrigopsasaki/runic/issues"
   },
   "packageManager": "pnpm@10.13.1",
   "dependencies": {

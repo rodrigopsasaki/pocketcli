@@ -1,9 +1,9 @@
-# pocket
+# runic
 
 Turn any script folder into a CLI.
 
 ```bash
-eval "$(pocket init zsh --name ops --dir ~/scripts)"
+eval "$(runic init zsh --name ops --dir ~/scripts)"
 ```
 
 ```
@@ -25,14 +25,14 @@ Scripts can be in any language. Directories become subcommands. File names becom
 
 ## How it works
 
-`pocket` generates a shell function with the name you choose. That function does all the dispatching — no Node.js startup on every invocation, no manifest to maintain, no config files. It probes the filesystem directly, finds your script, detects the runtime from the file extension, and runs it.
+`runic` generates a shell function with the name you choose. That function does all the dispatching — no Node.js startup on every invocation, no manifest to maintain, no config files. It probes the filesystem directly, finds your script, detects the runtime from the file extension, and runs it.
 
-The generated function handles everything: command dispatch, help, doctor diagnostics, tab completions. You interact with your CLI, not with `pocket`.
+The generated function handles everything: command dispatch, help, doctor diagnostics, tab completions. You interact with your CLI, not with `runic`.
 
 ## Install
 
 ```bash
-npm install -g pocketcli
+npm install -g run-user-nested-invokable-commands
 ```
 
 ## Setup
@@ -41,13 +41,13 @@ Add one line to your shell config (`.zshrc`, `.bashrc`, or `config.fish`):
 
 ```bash
 # zsh
-eval "$(pocket init zsh --name ops --dir ~/scripts)"
+eval "$(runic init zsh --name ops --dir ~/scripts)"
 
 # bash
-eval "$(pocket init bash --name ops --dir ~/scripts)"
+eval "$(runic init bash --name ops --dir ~/scripts)"
 
 # fish
-pocket init fish --name ops --dir ~/scripts | source
+runic init fish --name ops --dir ~/scripts | source
 ```
 
 That's it. You now have a CLI called `ops`.
@@ -95,7 +95,7 @@ No config files needed. Your scripts document themselves.
 Point at multiple directories. First directory wins on conflict.
 
 ```bash
-eval "$(pocket init zsh --name ops --dir ~/my-scripts --dir /shared/team-scripts)"
+eval "$(runic init zsh --name ops --dir ~/my-scripts --dir /shared/team-scripts)"
 ```
 
 This lets teams share a script repo while individuals add their own overrides.
@@ -105,9 +105,9 @@ This lets teams share a script repo while individuals add their own overrides.
 The `--name` flag is the CLI's identity. Create as many as you want:
 
 ```bash
-eval "$(pocket init zsh --name ops --dir ~/scripts/ops)"
-eval "$(pocket init zsh --name dev --dir ~/scripts/dev)"
-eval "$(pocket init zsh --name infra --dir /opt/infra/scripts)"
+eval "$(runic init zsh --name ops --dir ~/scripts/ops)"
+eval "$(runic init zsh --name dev --dir ~/scripts/dev)"
+eval "$(runic init zsh --name infra --dir /opt/infra/scripts)"
 ```
 
 Three separate CLIs. Three names. Independent.
@@ -122,7 +122,7 @@ Every generated CLI has these built-in:
 | `ops doctor` | Check permissions, shebangs, runners |
 | `ops completions zsh` | Generate tab-completion script |
 
-These delegate to the `pocket` binary for the heavy lifting (directory walking, formatting). Dispatch — the thing that runs 100 times a day — stays in the shell function at zero cost.
+These delegate to the `runic` binary for the heavy lifting (directory walking, formatting). Dispatch — the thing that runs 100 times a day — stays in the shell function at zero cost.
 
 ## Tab completions
 
@@ -142,9 +142,9 @@ ops completions fish | source
 ## Scaffolding new scripts
 
 ```bash
-pocket create scripts/deploy.sh      # creates with #!/bin/bash
-pocket create scripts/analyze.py     # creates with #!/usr/bin/env python3
-pocket create scripts/serve.js       # creates with #!/usr/bin/env node
+runic create scripts/deploy.sh      # creates with #!/bin/bash
+runic create scripts/analyze.py     # creates with #!/usr/bin/env python3
+runic create scripts/serve.js       # creates with #!/usr/bin/env node
 ```
 
 Creates the file with the right shebang, a description placeholder, and executable permissions.
@@ -155,17 +155,17 @@ Every script receives context through environment variables:
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `POCKET_COMMAND` | `db backup` | The command path as typed |
-| `POCKET_CLI_NAME` | `ops` | The CLI name |
-| `POCKET_SCRIPT_PATH` | `/home/you/scripts/db/backup.sh` | Absolute path to the script |
-| `POCKET_DIR` | `/home/you/scripts` | Which directory this script was found in |
-| `POCKET_DIRS` | `/home/you/scripts:/shared/scripts` | All directories (colon-separated) |
+| `RUNIC_COMMAND` | `db backup` | The command path as typed |
+| `RUNIC_CLI_NAME` | `ops` | The CLI name |
+| `RUNIC_SCRIPT_PATH` | `/home/you/scripts/db/backup.sh` | Absolute path to the script |
+| `RUNIC_DIR` | `/home/you/scripts` | Which directory this script was found in |
+| `RUNIC_DIRS` | `/home/you/scripts:/shared/scripts` | All directories (colon-separated) |
 
-Scripts can detect they're running inside a generated CLI by checking for `POCKET_COMMAND`.
+Scripts can detect they're running inside a generated CLI by checking for `RUNIC_COMMAND`.
 
 ## Command resolution
 
-`pocket` uses greedy longest-match. Given `ops deploy staging`:
+`runic` uses greedy longest-match. Given `ops deploy staging`:
 
 1. Try `<dir>/deploy/staging.{sh,py,js,...}` — if found, run it
 2. Try `<dir>/deploy.{sh,py,js,...}` with `staging` as an argument
@@ -211,7 +211,7 @@ platform-tools/
 Each team member adds to their `.zshrc`:
 
 ```bash
-eval "$(pocket init zsh --name plat --dir ~/repos/platform-tools --dir ~/my-scripts)"
+eval "$(runic init zsh --name plat --dir ~/repos/platform-tools --dir ~/my-scripts)"
 ```
 
 The Perl dev, the Python dev, and the bash purist all contribute scripts in their language. Nobody has to agree on a runtime. The `~/my-scripts` directory lets individuals add overrides or personal utilities without touching the shared repo.
@@ -219,11 +219,11 @@ The Perl dev, the Python dev, and the bash purist all contribute scripts in thei
 ## Development
 
 ```bash
-git clone https://github.com/rodrigopsasaki/pocketcli.git
-cd pocketcli
+git clone https://github.com/rodrigopsasaki/runic.git
+cd runic
 pnpm install
 pnpm test
-pnpm run build   # produces dist/pocket.cjs
+pnpm run build   # produces dist/runic.cjs
 ```
 
 ## License

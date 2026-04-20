@@ -7,19 +7,19 @@ import { create } from "../commands/create.js";
 import { CliError } from "../errors.js";
 
 const USAGE = `
-  pocket — Turn any script folder into a CLI
+  runic — Turn any script folder into a CLI
 
   Usage:
-    pocket init <shell> --name <name> --dir <dir> [--dir <dir>...]
-    pocket help --name <name> --dir <dir>
-    pocket doctor --dir <dir>
-    pocket completions <shell> --name <name> --dir <dir>
-    pocket create <path>
+    runic init <shell> --name <name> --dir <dir> [--dir <dir>...]
+    runic help --name <name> --dir <dir>
+    runic doctor --dir <dir>
+    runic completions <shell> --name <name> --dir <dir>
+    runic create <path>
 
   Setup:
-    eval "$(pocket init zsh --name myapp --dir ./scripts)"
+    eval "$(runic init zsh --name myapp --dir ./scripts)"
 
-  https://github.com/rodrigopsasaki/pocketcli
+  https://github.com/rodrigopsasaki/runic
 `;
 
 function main(): void {
@@ -35,7 +35,7 @@ function main(): void {
     }
 
     case "help": {
-      const name = getFlag(parsed.flags, "name") ?? "pocket";
+      const name = getFlag(parsed.flags, "name") ?? "runic";
       const dirs = getFlagAll(parsed.flags, "dir");
       help({ name, dirs });
       break;
@@ -49,7 +49,7 @@ function main(): void {
 
     case "completions": {
       const shell = parsed.positionals[0] ?? "";
-      const name = getFlag(parsed.flags, "name") ?? "pocket";
+      const name = getFlag(parsed.flags, "name") ?? "runic";
       const dirs = getFlagAll(parsed.flags, "dir");
       completions({ shell, name, dirs });
       break;
@@ -58,7 +58,7 @@ function main(): void {
     case "create": {
       const path = parsed.positionals[0];
       if (!path) {
-        throw new CliError("pocket create", "path argument is required (usage: pocket create <path>)");
+        throw new CliError("runic create", "path argument is required (usage: runic create <path>)");
       }
       create(path);
       break;
