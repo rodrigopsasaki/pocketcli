@@ -106,15 +106,24 @@ The first comment after the shebang becomes the command's description in `help` 
 
 No config files needed. Your scripts document themselves.
 
-## Multiple directories
+## Multiple directories — PATH-style overrides
 
-Point at multiple directories. First directory wins on conflict.
+Point at multiple directories. They're searched in order, like `$PATH`: **the first one to match wins.** This isn't a conflict to resolve, it's how you override.
 
 ```bash
 eval "$(runic init zsh --name ops --dir ~/my-scripts --dir /shared/team-scripts)"
 ```
 
-This lets teams share a script repo while individuals add their own overrides.
+Anything in `~/my-scripts` overrides the same-named command in `/shared/team-scripts`. Same as how `~/bin:/usr/local/bin:/usr/bin` lets you shadow a system binary by dropping a script in `~/bin`.
+
+What this enables:
+
+- **Personal overrides on a shared repo.** Your company maintains `/shared/team-scripts/deploy.sh` that does the standard thing. You want it to also tail logs after deploying. Drop your own `deploy.sh` in `~/my-scripts` — it shadows the team version, just for you, no fork required.
+- **Hotfix without a PR.** The team script has a bug at 11pm. Copy it to `~/my-scripts`, fix it, keep working. The override evaporates when you delete it.
+- **Per-environment behavior.** Same command name, different implementation in `~/my-scripts/aws/` vs `~/my-scripts/gcp/`. Switch by reordering `--dir`.
+- **Layered teams.** Platform team's repo, then your squad's repo, then your personal scripts: `--dir ~/personal --dir ~/squad-scripts --dir /platform-scripts`. Each layer can shadow the next.
+
+`runic doctor` reports every shadowed command so nothing happens behind your back.
 
 ## Whitelabeling
 
