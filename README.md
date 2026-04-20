@@ -172,12 +172,34 @@ Every generated CLI has these built-in:
 | Command | What it does |
 |---------|-------------|
 | `ops help` | List all commands with descriptions |
-| `ops doctor` | Check permissions, shebangs, runners |
+| `ops doctor` | Check permissions, shebangs, runners for your scripts |
+| `ops runtimes` | Show which interpreters are installed on this host (with versions) |
 | `ops completions zsh` | Generate tab-completion script |
 
 These delegate to the `runic` binary for the heavy lifting (directory walking, formatting). Dispatch — the thing that runs 100 times a day — stays in the shell function at zero cost.
 
-> **Note:** `help`, `doctor`, `completions`, and `create` are reserved at the top level. A script literally named `help.sh` (or `doctor.sh`, etc.) at the root of your script folder will be unreachable — the built-in wins. Nest it (`scripts/admin/help.sh`) if you need that name.
+> **Note:** `help`, `doctor`, `runtimes`, `completions`, and `create` are reserved at the top level. A script literally named `help.sh` (or `doctor.sh`, etc.) at the root of your script folder will be unreachable — the built-in wins. Nest it (`scripts/admin/help.sh`) if you need that name.
+
+### `runic runtimes`
+
+Lists every runtime runic supports, whether it's installed on this host, and what version. Run it before you start writing scripts to see what languages you can reach for; run it later when something unexpectedly stops working.
+
+```
+$ runic runtimes
+
+  runic runtimes
+
+  ✓ bash     5.2.37               (.sh, .bash)
+  ✓ zsh     5.9                   (.zsh)
+  ✓ python3 3.12.5                (.py)
+  ✓ ruby    3.3.0                 (.rb)
+  ✓ node    20.10.0               (.js)
+  ✓ tsx     4.19.2                (.ts — via npx tsx)
+  ✗ php     not installed         (.php)
+  ✓ perl    5.38.0                (.pl)
+
+  Extensionless files dispatch via their shebang line — any interpreter on PATH works.
+```
 
 ## Tab completions
 

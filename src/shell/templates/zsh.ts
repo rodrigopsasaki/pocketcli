@@ -24,7 +24,7 @@ function ${name}() {
 
   # Built-in commands delegate to the runic binary
   case "\$1" in
-    help|doctor|completions|create)
+    help|doctor|runtimes|completions|create)
       local -a __runic_dir_flags=(); for __runic_d in "\${__runic_dirs[@]}"; do __runic_dir_flags+=(--dir "\$__runic_d"); done
       command runic "\$1" --name "\$__runic_name" "\${__runic_dir_flags[@]}"
       return \$?

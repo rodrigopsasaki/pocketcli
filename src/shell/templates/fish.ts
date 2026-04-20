@@ -20,7 +20,7 @@ function ${name}
   set -l __runic_name "${name}"
 
   switch "$argv[1]"
-    case help doctor completions create
+    case help doctor runtimes completions create
       set -l dir_flags
       for d in $__runic_dirs; set -a dir_flags --dir $d; end
       command runic $argv[1] --name $__runic_name $dir_flags

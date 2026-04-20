@@ -4,6 +4,7 @@ import { help } from "../commands/help.js";
 import { doctor } from "../commands/doctor.js";
 import { completions } from "../commands/completions.js";
 import { create } from "../commands/create.js";
+import { runtimes } from "../commands/runtimes.js";
 import { CliError } from "../errors.js";
 
 const USAGE = `
@@ -13,6 +14,7 @@ const USAGE = `
     runic init <shell> --name <name> --dir <dir> [--dir <dir>...]
     runic help --name <name> --dir <dir>
     runic doctor --dir <dir>
+    runic runtimes
     runic completions <shell> --name <name> --dir <dir>
     runic create <path>
 
@@ -61,6 +63,11 @@ function main(): void {
         throw new CliError("runic create", "path argument is required (usage: runic create <path>)");
       }
       create(path);
+      break;
+    }
+
+    case "runtimes": {
+      runtimes();
       break;
     }
 
