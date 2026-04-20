@@ -165,7 +165,7 @@ With that target in mind, here's the honest tally.
 - **Refactor cost is filesystem cost.** Rename `db/` to `database/` and the command name moves with it. There's no manifest layer to insulate command names from file paths.
 - **Distribution still means "install runic."** Sharing your CLI = sharing the script folder + asking the recipient to install runic and `eval` the init line. There's no single-binary pack.
 
-If those tradeoffs read as showstoppers, you probably want a real CLI framework — Commander, oclif, Click, Cobra — and you should reach for one without hesitation. If they read as "yeah, that's fine for what I'm doing," runic is built for you.
+Want one of these smoothed out without giving up runic's flexibility? [Open an issue](https://github.com/rodrigopsasaki/runic/issues) and let's talk — several of them are solvable in the shell-function template without compromising the core model.
 
 ## Built-in commands
 
