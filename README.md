@@ -1,5 +1,7 @@
 # runic
 
+> Sorry, all the good names were already taken.
+
 Turn any script folder into a CLI.
 
 ```bash
